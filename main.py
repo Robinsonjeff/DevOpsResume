@@ -12,6 +12,7 @@ app.secret_key = "secret_key"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.sqlite3'
 db = SQLAlchemy(app)
 
+
 class User(db.Model):
 	__tablename__ = 'users'
 	
@@ -54,7 +55,9 @@ def login():
 
 @app.route('/register', methods=['GET','POST'])
 def register():
+     
 	if request.method == "POST":
+                
 
 		email = request.form['email']
 		password = request.form['password']
@@ -63,14 +66,14 @@ def register():
 		if password != confirm_password:
 			flash('Error passwords do not match. Try again')
 			return redirect(url_for("register"))
-			
+		db.create_all()
 
 		existing_user  = User.query.filter_by(email=email).first()
 		if existing_user:
 			flash("Email already in use. Try logging in or using a different email")
 			return redirect(url_for('register'))
 		
-		db.create_all()
+		# db.create_all()
 		new_user = User(email=email, password_plaintext=password)
 		db.session.add(new_user)
 		db.session.commit()
